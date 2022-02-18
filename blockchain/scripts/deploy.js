@@ -8,30 +8,19 @@ const { ethers } = require("hardhat");
 
 // Deploy upgradeable contract by name
 async function deployContract(contractName, ...args) {
+  console.log(`[${contractName}]: Deploying token contract proxy, token implementation...`);
   const Contract = await ethers.getContractFactory(contractName);
-  return upgrades.deployProxy(CommunityPowerToken, args, {
+  const contractProxy = await upgrades.deployProxy(Contract, args, {
     initializer: "initialize",
   });
+  console.log(`[${contractName}]: Deployed; Proxy address:`, contractProxy.address);
+
+  return contractProxy;
 }
 
 async function main() {
-  console.log(
-    "[Community Power Token]: Deploying token contract proxy, token implementation..."
-  );
   const tokenProxy = await deployContract("CommunityPowerToken");
-  console.log(
-    "[Community Power Token]: Deployed; Proxy address:",
-    tokenProxy.address
-  );
-
-  const ledgerContractProxy = await deployContract(
-    "CommunityLedger",
-    tokenProxy.address
-  );
-  console.log(
-    "[Community Ledger Contract]: Deployed; Proxy address:",
-    ledgerContractProxy.address
-  );
+  await deployContract("CommunityLedger", tokenProxy.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
