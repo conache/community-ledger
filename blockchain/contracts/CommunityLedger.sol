@@ -54,16 +54,21 @@ contract CommunityLedger is
         _updateMintPrice();
     }
 
-    function setMintingStatus(bool mintEnabled_) public onlyOwner {
-        _mintEnabled = mintEnabled_;
-    }
-
     function mintPrice() public view returns (uint256) {
         return _mintPrice;
     }
 
     function mintEnabled() public view returns (bool) {
         return _mintEnabled;
+    }
+
+    function setMintingStatus(bool mintEnabled_) public onlyOwner {
+        _mintEnabled = mintEnabled_;
+    }
+
+    function withdrawMintFee() public onlyOwner {
+        uint256 tokens = communityToken.balanceOf(address(this));
+        communityToken.transfer(owner(), tokens);
     }
 
     function supportsInterface(bytes4 interfaceId)

@@ -98,5 +98,15 @@ describe("CommunityLedger", () => {
       const expectedMintPrice = ethers.utils.parseUnits(`${mintPrice * 1.03}`, "wei");
       expect(await ledger.mintPrice()).to.equal(expectedMintPrice);
     });
+
+    it("Should allow owner withdraw total collected mint fee", async () => {
+      await expect(ledger.connect(user1).withdrawMintFee()).to.be.revertedWith("Ownable: caller is not the owner");
+      const expectedTotalMintFee = await xyzToken.balanceOf(ledger.address);
+      const previousOwnerBalance = await xyzToken.balanceOf(owner.address);
+
+      await ledger.withdrawMintFee();
+      const currentOwnerBalance = await xyzToken.balanceOf(owner.address);
+      expect(currentOwnerBalance.sub(previousOwnerBalance)).to.equal(expectedTotalMintFee);
+    });
   });
 });
