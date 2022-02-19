@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import "./App.css";
+import React from "react";
+import TopNav from "./components/TopNav";
+import Hero from "./components/Hero";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>This is where you start today.</p>
-      </header>
-    </div>
+    <>
+      <TopNav />
+      <Hero />
+    </>
   );
-}
+};
 
 export default App;

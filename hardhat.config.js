@@ -21,15 +21,18 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 
 const KOVAN_RPC_URL = process.env.KOVAN_RPC_URL;
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
 
 module.exports = {
   solidity: "0.8.4",
+  paths: {
+    artifacts: "./src/artifacts",
+  },
   defaultNetwork: "kovan",
   networks: {
     kovan: {
       url: KOVAN_RPC_URL,
-      accounts: [PRIVATE_KEY],
+      accounts: [DEPLOYER_PRIVATE_KEY],
     },
   },
 };
