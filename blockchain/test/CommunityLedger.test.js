@@ -46,6 +46,7 @@ describe("CommunityLedger", () => {
       expect(mintPrice).to.equal(ethers.utils.parseUnits("10", 18));
       expect(await ledger.communityToken()).to.equal(xyzToken.address);
       expect(await ledger.owner()).to.equal(owner.address);
+      expect(await ledger.mintedBricksCount()).to.equal(0);
     });
   });
 
@@ -84,6 +85,7 @@ describe("CommunityLedger", () => {
       await ledger.connect(user1).mint(TOKEN_URI);
       expect(await ledger.balanceOf(user1.address)).to.equal(1);
       expect(await xyzToken.balanceOf(user1.address)).to.equal(0);
+      expect(await ledger.mintedBricksCount()).to.equal(1);
 
       const mintedTokenId = await ledger.tokenOfOwnerByIndex(user1.address, 0);
       expect(await ledger.tokenURI(mintedTokenId)).to.equal(TOKEN_URI);

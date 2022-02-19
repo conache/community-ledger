@@ -19,7 +19,7 @@ contract CommunityLedger is
     using Counters for Counters.Counter;
     using SafeMath for uint256;
 
-    Counters.Counter private _tokenIds;
+    Counters.Counter public mintedBricksCount;
 
     bool private _mintEnabled;
     uint256 private _mintPrice;
@@ -46,8 +46,8 @@ contract CommunityLedger is
 
         communityToken.transferFrom(msg.sender, address(this), _mintPrice);
 
-        _tokenIds.increment();
-        uint256 newTokenId = _tokenIds.current();
+        mintedBricksCount.increment();
+        uint256 newTokenId = mintedBricksCount.current();
         _safeMint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, _uri);
 
