@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import FileInput from './FileInput'
@@ -10,8 +10,6 @@ import useWallet from '../hooks/useWallet'
 import { IBrick } from './BrickItem'
 import Button from './Button'
 import useAccountData from '../hooks/useAccountData'
-import { useEffect } from 'react'
-import { useState } from 'react'
 
 interface IMintForm {
   hasEnoughTokens: boolean
@@ -108,27 +106,34 @@ const MintForm = ({ hasEnoughTokens, handleFormSubmit }: IMintForm) => {
   )
 }
 
+interface IMintData {
+  mintError: any
+  minting: boolean
+  finishedMinting: boolean
+}
+
 const MintFormContainer = () => {
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false)
+  const [mintData, setMintData] = useReducer(
+    (prevState: IMintData, newState: Partial<IMintData>) => ({
+      ...prevState,
+      ...newState
+    }),
+    {
+      mintError: null,
+      minting: false,
+      finishedMinting: false
+    }
+  )
 
   const { account } = useWallet()
-  const { mintPrice, mintedBricksCount } = usePlarformData()
+  const { mintPrice } = usePlarformData()
   const { tokenBalance } = useAccountData()
 
   const tokenContract = useTokenContract()
   const ledgerContract = useLedgerContract()
 
-  const handleFormSubmit = async (values: IBrick) => {
-    const uploaded = await constants.ipfsClient.add(JSON.stringify(values))
-    const ipfsUrl = `${fullIpfsUrl(uploaded.path)}`
-    const currentAllowance = await tokenContract.allowance(
-      account,
-      ledgerContract.address
-    )
-
-    await tokenContract.approve(ledgerContract.address, mintPrice)
-    await ledgerContract.mint(ipfsUrl)
-  }
+  const { finishedMinting, minting, mintError } = mintData
 
   useEffect(() => {
     const checkHasTokens = async () => {
@@ -138,10 +143,73 @@ const MintFormContainer = () => {
     checkHasTokens()
   }, [mintPrice, tokenBalance])
 
+  useEffect(() => {
+    if (!mintError) {
+      return
+    }
+
+    // hide mint error after 10 seconds
+    const timeoutId = setTimeout(() => setMintData({ mintError: null }), 10 * 1000)
+
+    return () => clearTimeout(timeoutId)
+  }, [mintError])
+
+  const mintToken = async (ipfsUrl: string) => {
+    try {
+      await ledgerContract.mint(ipfsUrl)
+      setMintData({ minting: true })
+    } catch (err) {
+      setMintData({ minting: false, mintError: err })
+      return
+    }
+    setMintData({ minting: false, finishedMinting: true })
+  }
+
+  const handleFormSubmit = async (values: IBrick) => {
+    const uploaded = await constants.ipfsClient.add(JSON.stringify(values))
+    const currentAllowance = await tokenContract.allowance(
+      account,
+      ledgerContract.address
+    )
+
+    if (currentAllowance.lt(mintPrice)) {
+      await tokenContract.approve(ledgerContract.address, mintPrice)
+    }
+
+    await mintToken(`${fullIpfsUrl(uploaded.path)}`)
+  }
+
+  if (minting) {
+    return (
+      <div className="flex flex-col text-center">
+        <div className="text-6xl animate-bounce">⏳</div>
+        <div className="text-2xl font-bold">We're minting your brick right now...</div>
+      </div>
+    )
+  }
+
+  if (finishedMinting && !mintError) {
+    return (
+      <div className="flex flex-col text-center">
+        <div className="text-6xl animate-bounce">🎉</div>
+        <div className="text-2xl font-bold">Welcome to the club!</div>
+        <div>
+          Your xBrick will appear on your dashboard in a couple of seconds. Please wait!
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="flex justify-center">
+    <>
+      {mintError && (
+        <div className="mb-4 text-center text-error">
+          Error while requesting your brick to be minted. <br />
+          Check your wallet and try again.
+        </div>
+      )}
       <MintForm handleFormSubmit={handleFormSubmit} hasEnoughTokens={hasEnoughTokens} />
-    </div>
+    </>
   )
 }
 

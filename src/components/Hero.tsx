@@ -26,7 +26,15 @@ const Hero = () => {
   }
 
   return (
-    <div className="mt-10">{nftBalance > 0 ? <MintedBrickDetails /> : <MintForm />}</div>
+    <div className="mt-10">
+      {nftBalance > 0 ? (
+        <MintedBrickDetails />
+      ) : (
+        <div className="flex flex-col items-center justify-center">
+          <MintForm />
+        </div>
+      )}
+    </div>
   )
 }
 
