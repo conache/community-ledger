@@ -1,6 +1,6 @@
 ## 📣 See it live at https://reverent-kare-6dc98a.netlify.app/
 
-# Project idea
+# 🌱 Project idea
 
 We've had an idea internally for a while to build a "Community Ledger" where members of our community could pay a fee to inscribe their names/handles and a message in a "ledger" which will live on forever on chain. It could be a fun idea to let our community members leave some kind of legacy (discussed a bit in [here](https://gov.xtoken.cafe/t/xp2-xtokenomics-proposal/73)).
 
@@ -21,7 +21,7 @@ Your frontend (React mandatory, Typescript optional) should:
 - display 1) number of total bricks, 2) amount of XYZ in the contract, 3) current price for a brick
 - be practical, but well designed with a bit of flourish
 
-# Basic project setup
+# 📦 Basic project setup
 
 1. Install dependencies
 
@@ -40,6 +40,13 @@ yarn install
 yarn start
 ```
 
-# Deployment
+# 🚀 Deployment
 
 The `master` branch is deployed automatically at https://reverent-kare-6dc98a.netlify.app/.
+
+# 🖼 Screenshots
+
+<img width="1446" alt="Screenshot 2022-02-20 at 23 42 13" src="https://user-images.githubusercontent.com/8314201/154865715-c9014d7e-9865-4ad7-ba1f-08a3bc99ad10.png">
+
+<img width="1447" alt="Screenshot 2022-02-20 at 23 42 52" src="https://user-images.githubusercontent.com/8314201/154865706-2e6f56a1-85e4-42dc-9ac2-3bcf14e5c6a2.png">
+
