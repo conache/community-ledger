@@ -15,8 +15,6 @@ const MintedBrickDetails = () => {
   }, [])
 
   const updateMintedBrickData = async () => {
-    console.log('HERE')
-    debugger
     const id = (await ledgerContract.tokenOfOwnerByIndex(account, 0)).toNumber()
     const uri = await ledgerContract.tokenURI(id)
     setMintedBrickData({
