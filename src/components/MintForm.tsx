@@ -156,8 +156,8 @@ const MintFormContainer = () => {
 
   const mintToken = async (ipfsUrl: string) => {
     try {
-      await ledgerContract.mint(ipfsUrl)
       setMintData({ minting: true })
+      await ledgerContract.mint(ipfsUrl).wait()
     } catch (err) {
       setMintData({ minting: false, mintError: err })
       return
@@ -173,7 +173,7 @@ const MintFormContainer = () => {
     )
 
     if (currentAllowance.lt(mintPrice)) {
-      await tokenContract.approve(ledgerContract.address, mintPrice)
+      await tokenContract.approve(ledgerContract.address, mintPrice).wait()
     }
 
     await mintToken(`${fullIpfsUrl(uploaded.path)}`)

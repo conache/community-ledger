@@ -2,6 +2,7 @@ require('dotenv').config()
 require('@nomiclabs/hardhat-waffle')
 require('@nomiclabs/hardhat-ethers')
 require('@openzeppelin/hardhat-upgrades')
+require('@nomiclabs/hardhat-etherscan')
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -20,7 +21,6 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const KOVAN_RPC_URL = process.env.KOVAN_RPC_URL
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY
 
 module.exports = {
@@ -28,11 +28,18 @@ module.exports = {
   paths: {
     artifacts: './src/artifacts'
   },
-  defaultNetwork: 'kovan',
+  defaultNetwork: 'rinkeby',
   networks: {
     kovan: {
-      url: KOVAN_RPC_URL,
+      url: process.env.KOVAN_RPC_URL,
+      accounts: [DEPLOYER_PRIVATE_KEY]
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_RPC_URL,
       accounts: [DEPLOYER_PRIVATE_KEY]
     }
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
   }
 }
