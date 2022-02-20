@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
 import { WalletContextProvider } from './contexts/WalletContext'
-import { BlockContextProvider } from './contexts/BlockContext'
+import { BlockRefresherContextProvider } from './contexts/BlockRefresherContext'
 import { PlatformDataContextProvider } from './contexts/PlatformDataContext'
 import { AccountDataContextProvider } from './contexts/AccountDataContext'
 
 ReactDOM.render(
   <React.StrictMode>
-    <BlockContextProvider>
+    <BlockRefresherContextProvider>
       <WalletContextProvider>
         <PlatformDataContextProvider>
           <AccountDataContextProvider>
@@ -17,7 +17,7 @@ ReactDOM.render(
           </AccountDataContextProvider>
         </PlatformDataContextProvider>
       </WalletContextProvider>
-    </BlockContextProvider>
+    </BlockRefresherContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

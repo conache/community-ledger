@@ -10,7 +10,7 @@ interface BrickPreview {
   ownerAddress: string
 }
 
-const MintedBricks = () => {
+const MintedBricksList = () => {
   const [bricks, setBricks] = useState<BrickPreview[]>([])
   const { mintedBricksCount } = usePlarformData()
   const ledgerContract = useLedgerContract()
@@ -40,18 +40,28 @@ const MintedBricks = () => {
     updateBricksData()
   }, [mintedBricksCount, updateBricksData])
 
+  if (mintedBricksCount === 0) {
+    return <></>
+  }
+
   return (
     <>
-      {bricks.map(({ uri, id, ownerAddress }) => (
-        <BrickItem
-          key={`minted-brick-${id}`}
-          id={id}
-          uri={uri}
-          ownerAddress={ownerAddress}
-        />
-      ))}
+      <div className="font-bold text-3xl mb-4 ml-20 pr-20 pb-2 border-b-2">
+        MINTED xBRICKS ({mintedBricksCount})
+      </div>
+
+      <div className="overflow-auto flex px-20 py-5 gap-10">
+        {bricks.map(({ uri, id, ownerAddress }) => (
+          <BrickItem
+            key={`minted-brick-${id}`}
+            id={id}
+            uri={uri}
+            ownerAddress={ownerAddress}
+          />
+        ))}
+      </div>
     </>
   )
 }
 
-export default MintedBricks
+export default MintedBricksList

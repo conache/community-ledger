@@ -53,7 +53,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-    setState({ account: newAccountAddr, provider, signer: provider.getSigner() })
+    setState({
+      account: newAccountAddr.toLowerCase(),
+      provider,
+      signer: provider.getSigner()
+    })
   }
 
   const connectWallet = async () => {

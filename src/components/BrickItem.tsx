@@ -1,6 +1,8 @@
 import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import { prettifyAccountAddress } from '../utils'
+import LoadingText from './LoadingText'
 
 export interface IBrick {
   name: string
@@ -25,18 +27,33 @@ const BrickItem = ({ uri, id, ownerAddress }: IBrickItemData) => {
 
   return (
     <div>
-      {brickDetails ? (
-        <div>
-          <div>#{id}</div>
-          <img alt="Brick" src={brickDetails?.fileUrl} width="260" />
-          <div>
-            Name: {brickDetails.name} ({ownerAddress})
-          </div>
-          <div>MessagE: {brickDetails.message}</div>
-        </div>
-      ) : (
-        <div>Loading</div>
-      )}
+      <div className="w-[320px] h-[400px] bg-blue-dark shadow-bottom-left rounded-lg flex flex-col">
+        {brickDetails ? (
+          <>
+            <img
+              alt="Brick"
+              src={brickDetails?.fileUrl}
+              className="w-full h-[50%] object-cover rounded-t-lg"
+            />
+            <div
+              className="flex flex-col w-full gap-2 p-4"
+              style={{ overflowWrap: 'break-word' }}
+            >
+              <div className="text-lg font-bold">xBrick #{id}</div>
+              <div className="flex">
+                <div className="mr-2 font-bold">Name:</div> {brickDetails.name} (
+                {prettifyAccountAddress(ownerAddress)})
+              </div>
+              <div className="flex flex-col">
+                <div className="font-bold">Message:</div>
+                <p className="max-h-[80px] overflow-auto">{brickDetails.message}</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <LoadingText />
+        )}
+      </div>
     </div>
   )
 }

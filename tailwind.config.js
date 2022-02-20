@@ -1,16 +1,12 @@
 module.exports = {
+  mode: 'jit',
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     colors: {
-      'blue': '#1fb6ff',
-      'purple': '#7e5bef',
-      'pink': '#ff49db',
-      'orange': '#ff7849',
-      'green': '#13ce66',
-      'yellow': '#ffc82c',
-      'gray-dark': '#273444',
-      'gray': '#8492a6',
-      'gray-light': '#d3dce6'
+      'blue-dark': '#4706B6',
+      'blue-light': '#60D0FD',
+      'blue': '#5327EE',
+      'purple-main': 'linear-gradient(180deg, #943BF3 0%, #5327EE 100%);'
     },
     fontFamily: {
       sans: ['Graphik', 'sans-serif'],
@@ -23,6 +19,9 @@ module.exports = {
       },
       borderRadius: {
         '4xl': '2rem'
+      },
+      boxShadow: {
+        'bottom-left': 'rgb(157 79 255 / 70%) -8px 8px 0px'
       }
     }
   }

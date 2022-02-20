@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback } from 'react'
 import { BigNumber } from 'ethers'
 import { useState } from 'react'
-import useBlock from '../hooks/useBlock'
 import { useLedgerContract, useTokenContract } from '../hooks/useContract'
 import useWallet from '../hooks/useWallet'
+import useBlockRefresher from '../hooks/useBlockRefresher'
 
 interface IAccountData {
   tokenBalance: BigNumber
@@ -19,9 +19,8 @@ const AccountDataContext = React.createContext<IAccountData>(DEFAULT_VALUES)
 
 const AccountDataContextProvider: React.FC = ({ children }) => {
   const [state, setState] = useState<IAccountData>(DEFAULT_VALUES)
-
   const { account } = useWallet()
-  const currentBlock = useBlock()
+  const { refreshCount } = useBlockRefresher()
 
   const tokenContract = useTokenContract()
   const ledgerContract = useLedgerContract()
@@ -35,7 +34,6 @@ const AccountDataContextProvider: React.FC = ({ children }) => {
       tokenContract.balanceOf(account),
       ledgerContract.balanceOf(account)
     ])
-
     setState({
       tokenBalance,
       nftBalance: nftBalance.toNumber()
@@ -44,7 +42,7 @@ const AccountDataContextProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     updateAccountData()
-  }, [account, currentBlock, updateAccountData])
+  }, [account, updateAccountData, refreshCount])
 
   return (
     <AccountDataContext.Provider value={{ ...state }}>

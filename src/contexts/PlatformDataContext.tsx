@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { BigNumber } from 'ethers'
 import { useLedgerContract, useTokenContract } from '../hooks/useContract'
-import useBlock from '../hooks/useBlock'
+import useBlockRefresher from '../hooks/useBlockRefresher'
 
 interface IPlarformData {
+  loading: boolean
   tokenName?: string | null
   tokenSymbol?: string | null
   mintPrice: BigNumber
@@ -12,6 +13,7 @@ interface IPlarformData {
 }
 
 const PlatformDataContext = React.createContext<IPlarformData>({
+  loading: true,
   tokenName: null,
   tokenSymbol: null,
   mintPrice: BigNumber.from(0),
@@ -21,6 +23,7 @@ const PlatformDataContext = React.createContext<IPlarformData>({
 
 const PlatformDataContextProvider: React.FC = ({ children }) => {
   const [state, setState] = useState<IPlarformData>({
+    loading: true,
     tokenName: null,
     tokenSymbol: null,
     mintPrice: BigNumber.from(0),
@@ -28,7 +31,7 @@ const PlatformDataContextProvider: React.FC = ({ children }) => {
     mintedBricksCount: 0
   })
 
-  const currentBlock = useBlock()
+  const { blockNumber, refreshCount } = useBlockRefresher()
   const tokenContract = useTokenContract()
   const ledgerContract = useLedgerContract()
 
@@ -43,6 +46,7 @@ const PlatformDataContextProvider: React.FC = ({ children }) => {
       ])
 
     setState({
+      loading: false,
       tokenName,
       tokenSymbol,
       mintPrice,
@@ -53,7 +57,7 @@ const PlatformDataContextProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     updateData()
-  }, [currentBlock, updateData])
+  }, [updateData, blockNumber, refreshCount])
 
   return (
     <PlatformDataContext.Provider value={{ ...state }}>
