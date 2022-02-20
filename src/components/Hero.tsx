@@ -25,7 +25,9 @@ const Hero = () => {
     return <ConnectPreview />
   }
 
-  return nftBalance > 0 ? <MintedBrickDetails /> : <MintForm />
+  return (
+    <div className="mt-10">{nftBalance > 0 ? <MintedBrickDetails /> : <MintForm />}</div>
+  )
 }
 
 export default Hero

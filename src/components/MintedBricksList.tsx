@@ -46,11 +46,11 @@ const MintedBricksList = () => {
 
   return (
     <>
-      <div className="font-bold text-3xl mb-4 ml-20 pr-20 pb-2 border-b-2">
-        MINTED xBRICKS ({mintedBricksCount})
+      <div className="flex items-baseline pb-2 pr-20 mb-4 ml-20 text-3xl font-bold border-b-2">
+        <div className="mr-2 text-6xl">🧱</div> MINTED xBRICKS ({mintedBricksCount})
       </div>
 
-      <div className="overflow-auto flex px-20 py-5 gap-10">
+      <div className="flex gap-10 px-20 py-5 overflow-auto">
         {bricks.map(({ uri, id, ownerAddress }) => (
           <BrickItem
             key={`minted-brick-${id}`}
