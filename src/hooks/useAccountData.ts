@@ -1,6 +1,6 @@
-import { useContext } from "react";
-import { AccountDataContext } from "../contexts/AccountDataContext";
+import { useContext } from 'react'
+import { AccountDataContext } from '../contexts/AccountDataContext'
 
-const useAccountData = () => useContext(AccountDataContext);
+const useAccountData = () => useContext(AccountDataContext)
 
-export default useAccountData;
+export default useAccountData

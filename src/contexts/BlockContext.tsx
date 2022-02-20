@@ -1,27 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getDefaultProvider } from "../utils";
+import React, { useEffect, useRef, useState } from 'react'
+import { getDefaultProvider } from '../utils'
 
-const BlockContext = React.createContext(0);
+const BlockContext = React.createContext(0)
 
 const BlockContextProvider: React.FC = ({ children }) => {
-  const previousBlock = useRef(0);
-  const [block, setBlock] = useState(0);
+  const previousBlock = useRef(0)
+  const [block, setBlock] = useState(0)
 
   useEffect(() => {
-    const provider = getDefaultProvider();
+    const provider = getDefaultProvider()
 
     const interval = setInterval(async () => {
-      const blockNumber = await provider.getBlockNumber();
+      const blockNumber = await provider.getBlockNumber()
       if (blockNumber !== previousBlock.current) {
-        previousBlock.current = blockNumber;
-        setBlock(blockNumber);
+        previousBlock.current = blockNumber
+        setBlock(blockNumber)
       }
-    }, 6000);
+    }, 2000)
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(interval)
+  }, [])
 
-  return <BlockContext.Provider value={block}>{children}</BlockContext.Provider>;
-};
+  return <BlockContext.Provider value={block}>{children}</BlockContext.Provider>
+}
 
-export { BlockContext, BlockContextProvider };
+export { BlockContext, BlockContextProvider }
