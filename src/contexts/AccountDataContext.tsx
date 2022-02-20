@@ -6,11 +6,13 @@ import useWallet from '../hooks/useWallet'
 import useBlockRefresher from '../hooks/useBlockRefresher'
 
 interface IAccountData {
+  account: string | null
   tokenBalance: BigNumber
   nftBalance: number
 }
 
 const DEFAULT_VALUES = {
+  account: null,
   tokenBalance: BigNumber.from(0),
   nftBalance: 0
 }
@@ -35,6 +37,7 @@ const AccountDataContextProvider: React.FC = ({ children }) => {
       ledgerContract.balanceOf(account)
     ])
     setState({
+      account,
       tokenBalance,
       nftBalance: nftBalance.toNumber()
     })

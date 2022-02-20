@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import useAccountData from '../hooks/useAccountData'
 import { useLedgerContract } from '../hooks/useContract'
-import useWallet from '../hooks/useWallet'
 import BrickItem, { IBrickItemData } from './BrickItem'
 import LoadingText from './LoadingText'
 
 const MintedBrickDetails = () => {
   const [mintedBrickData, setMintedBrickData] = useState<IBrickItemData | null>()
-  const { account } = useWallet()
+  const { account, nftBalance } = useAccountData()
   const ledgerContract = useLedgerContract()
 
   const updateMintedBrickData = useCallback(async () => {
+    if (!nftBalance) {
+      return
+    }
+
     const id = (await ledgerContract.tokenOfOwnerByIndex(account, 0)).toNumber()
     const uri = await ledgerContract.tokenURI(id)
     setMintedBrickData({
@@ -17,7 +21,7 @@ const MintedBrickDetails = () => {
       uri,
       ownerAddress: account || ''
     })
-  }, [ledgerContract, account])
+  }, [ledgerContract, nftBalance, account])
 
   useEffect(() => {
     updateMintedBrickData()

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useReducer } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { ethers } from 'ethers'
 import FileInput from './FileInput'
 import constants from '../constants'
 import { fullIpfsUrl } from '../utils'
@@ -108,6 +109,7 @@ const MintForm = ({ hasEnoughTokens, handleFormSubmit }: IMintForm) => {
 
 interface IMintData {
   mintError: any
+  approvingSpending: boolean
   minting: boolean
   finishedMinting: boolean
 }
@@ -121,19 +123,20 @@ const MintFormContainer = () => {
     }),
     {
       mintError: null,
+      approvingSpending: false,
       minting: false,
       finishedMinting: false
     }
   )
 
   const { account } = useWallet()
-  const { mintPrice } = usePlarformData()
+  const { mintPrice, tokenSymbol } = usePlarformData()
   const { tokenBalance } = useAccountData()
 
   const tokenContract = useTokenContract()
   const ledgerContract = useLedgerContract()
 
-  const { finishedMinting, minting, mintError } = mintData
+  const { finishedMinting, minting, mintError, approvingSpending } = mintData
 
   useEffect(() => {
     const checkHasTokens = async () => {
@@ -157,7 +160,8 @@ const MintFormContainer = () => {
   const mintToken = async (ipfsUrl: string) => {
     try {
       setMintData({ minting: true })
-      await ledgerContract.mint(ipfsUrl).wait()
+      const tx = await ledgerContract.mint(ipfsUrl)
+      await tx.wait()
     } catch (err) {
       setMintData({ minting: false, mintError: err })
       return
@@ -173,17 +177,26 @@ const MintFormContainer = () => {
     )
 
     if (currentAllowance.lt(mintPrice)) {
-      await tokenContract.approve(ledgerContract.address, mintPrice).wait()
+      const tx = await tokenContract.approve(ledgerContract.address, mintPrice)
+      setMintData({ approvingSpending: true })
+      await tx.wait()
+      setMintData({ approvingSpending: false })
     }
 
     await mintToken(`${fullIpfsUrl(uploaded.path)}`)
   }
 
-  if (minting) {
+  if (minting || approvingSpending) {
     return (
       <div className="flex flex-col text-center">
         <div className="text-6xl animate-bounce">⏳</div>
-        <div className="text-2xl font-bold">We're minting your brick right now...</div>
+        <div className="text-2xl font-bold">
+          {minting
+            ? 'Minting your brick...'
+            : `Allowing contract to spend ${ethers.utils.formatEther(
+                mintPrice
+              )} ${tokenSymbol}...`}
+        </div>
       </div>
     )
   }

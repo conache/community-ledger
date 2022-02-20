@@ -36,9 +36,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
   )
 
   useEffect(() => {
-    window.ethereum.on('accountsChanged', (accounts?: string[]) =>
+    const accountChangeHandler = (accounts?: string[]) =>
       handleAccountChange(accounts?.[0])
-    )
+    window.ethereum.on('accountsChanged', accountChangeHandler)
+
+    return () => window.ethereum.removeListener('accountsChanged', accountChangeHandler)
   })
 
   const handleAccountChange = (newAccountAddr?: string) => {
