@@ -8,12 +8,17 @@ import { useLedgerContract, useTokenContract } from '../hooks/useContract'
 import usePlarformData from '../hooks/usePlatformData'
 import useWallet from '../hooks/useWallet'
 import { IBrick } from './BrickItem'
+import Button from './Button'
+import useAccountData from '../hooks/useAccountData'
+import { useEffect } from 'react'
+import { useState } from 'react'
 
 interface IMintForm {
+  hasEnoughTokens: boolean
   handleFormSubmit: (values: IBrick) => void
 }
 
-const MintForm = ({ handleFormSubmit }: IMintForm) => {
+const MintForm = ({ hasEnoughTokens, handleFormSubmit }: IMintForm) => {
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -24,19 +29,31 @@ const MintForm = ({ handleFormSubmit }: IMintForm) => {
       name: Yup.string().required('Name required on the brick 🤷🏼‍♂️'),
       message: Yup.string()
         .max(100, 'Too many words 💬')
-        .required('Tell others your 2 cents.'),
+        .required('You surely have a message to say.'),
       fileUrl: Yup.string().required('Image required 🖼')
     }),
     onSubmit: handleFormSubmit
   })
+  const inputComponentStyle = 'flex flex-col mb-4'
+  const inputFieldStyle = `rounded p-2 bg-white/25`
+  const labelStyle = 'font-bold text-sm'
+  const errorStyle = 'text-sm text-error'
 
   return (
-    <div>
-      <div>Mint your own brick</div>
+    <div className="w-fit max-w-[400px]">
+      <div className="mb-4 text-2xl font-bold text-center">Mint your own brick</div>
+      {!hasEnoughTokens && (
+        <div className={`${errorStyle} mb-2`}>
+          Unfortunately, you don't have enough XYZ to mint.
+        </div>
+      )}
       <form onSubmit={formik.handleSubmit}>
-        <div>
-          <label htmlFor="name">Inscribe your name</label>
+        <div className={inputComponentStyle}>
+          <label htmlFor="name" className={labelStyle}>
+            Inscribe your name
+          </label>
           <input
+            className={inputFieldStyle}
             id="name"
             name="name"
             type="text"
@@ -45,12 +62,15 @@ const MintForm = ({ handleFormSubmit }: IMintForm) => {
             value={formik.values.name}
           />
           {formik.touched.name && formik.errors.name ? (
-            <div>{formik.errors.name}</div>
+            <div className={errorStyle}>{formik.errors.name}</div>
           ) : null}
         </div>
-        <div>
-          <label htmlFor="message">Tell us a message</label>
+        <div className={inputComponentStyle}>
+          <label htmlFor="message" className={labelStyle}>
+            Tell all a message
+          </label>
           <textarea
+            className={inputFieldStyle}
             maxLength={100}
             id="message"
             name="message"
@@ -59,30 +79,42 @@ const MintForm = ({ handleFormSubmit }: IMintForm) => {
             value={formik.values.message}
           />
           {formik.touched.message && formik.errors.message ? (
-            <div>{formik.errors.message}</div>
+            <div className={errorStyle}>{formik.errors.message}</div>
           ) : null}
         </div>
-        <div>
-          <label>Pick a photo</label>
+        <div className={inputComponentStyle}>
+          <label htmlFor="message" className={labelStyle}>
+            Pick a photo
+          </label>
           <FileInput
             id="fileUrl"
             name="fileUrl"
             setFieldValue={formik.setFieldValue}
             setFieldError={formik.setFieldError}
           />
-          {formik.errors.fileUrl ? <div>{formik.errors.fileUrl}</div> : null}
+          {formik.errors.fileUrl ? (
+            <div className={errorStyle}>{formik.errors.fileUrl}</div>
+          ) : null}
         </div>
-        <button type="submit" disabled={!(formik.isValid && formik.dirty)}>
+        <Button
+          type="submit"
+          disabled={!(formik.isValid && formik.dirty && hasEnoughTokens)}
+          className={'w-full mt-4'}
+        >
           Mint
-        </button>
+        </Button>
       </form>
     </div>
   )
 }
 
 const MintFormContainer = () => {
+  const [hasEnoughTokens, setHasEnoughTokens] = useState(false)
+
   const { account } = useWallet()
   const { mintPrice, mintedBricksCount } = usePlarformData()
+  const { tokenBalance } = useAccountData()
+
   const tokenContract = useTokenContract()
   const ledgerContract = useLedgerContract()
 
@@ -98,7 +130,19 @@ const MintFormContainer = () => {
     await ledgerContract.mint(ipfsUrl)
   }
 
-  return <MintForm handleFormSubmit={handleFormSubmit} />
+  useEffect(() => {
+    const checkHasTokens = async () => {
+      setHasEnoughTokens(await tokenBalance.gte(mintPrice))
+    }
+
+    checkHasTokens()
+  }, [mintPrice, tokenBalance])
+
+  return (
+    <div className="flex justify-center">
+      <MintForm handleFormSubmit={handleFormSubmit} hasEnoughTokens={hasEnoughTokens} />
+    </div>
+  )
 }
 
 export default MintFormContainer

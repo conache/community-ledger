@@ -15,7 +15,6 @@ interface IFileInput {
 const FileInput = ({ id, name, setFieldValue, setFieldError }: IFileInput) => {
   const [fileUrl, setFileUrl] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
-  const [uploadError, setUploadError] = useState<string | unknown>(null)
 
   useEffect(() => {
     setFieldValue(name, fileUrl)
@@ -49,11 +48,10 @@ const FileInput = ({ id, name, setFieldValue, setFieldError }: IFileInput) => {
 
   return (
     <div>
-      <input type="file" onChange={onChange} accept="image/*" id={id} name={name} />
       {!loading && fileUrl && (
-        <img alt="Your inscribed brick" src={fileUrl} width="200px" />
+        <img alt="Your inscribed brick" src={fileUrl} className="object-cover w-full" />
       )}
-      {uploadError}
+      <input type="file" onChange={onChange} accept="image/*" id={id} name={name} />
     </div>
   )
 }
