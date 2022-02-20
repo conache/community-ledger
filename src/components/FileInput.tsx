@@ -49,7 +49,11 @@ const FileInput = ({ id, name, setFieldValue, setFieldError }: IFileInput) => {
   return (
     <div>
       {!loading && fileUrl && (
-        <img alt="Your inscribed brick" src={fileUrl} className="object-cover w-full" />
+        <img
+          alt="Your inscribed brick"
+          src={fileUrl}
+          className="object-cover w-full max-h-[300px]"
+        />
       )}
       <input type="file" onChange={onChange} accept="image/*" id={id} name={name} />
     </div>

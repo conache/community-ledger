@@ -28,7 +28,7 @@ const MintedBrickDetails = () => {
       {mintedBrickData ? (
         <>
           <div className="mb-4 text-3xl font-bold">
-            You're a part of our community now 🍻
+            Cheers! You're a part of our community 🍻
           </div>
           <BrickItem
             id={mintedBrickData.id}

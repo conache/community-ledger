@@ -69,7 +69,7 @@ const MintForm = ({ hasEnoughTokens, handleFormSubmit }: IMintForm) => {
           </label>
           <textarea
             className={inputFieldStyle}
-            maxLength={100}
+            maxLength={50}
             id="message"
             name="message"
             onChange={formik.handleChange}
