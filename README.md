@@ -43,3 +43,10 @@ yarn start
 # Deployment
 
 The `master` branch is deployed automatically at https://reverent-kare-6dc98a.netlify.app/.
+
+# Screenshots
+
+<img width="1446" alt="Screenshot 2022-02-20 at 23 42 13" src="https://user-images.githubusercontent.com/8314201/154865715-c9014d7e-9865-4ad7-ba1f-08a3bc99ad10.png">
+
+<img width="1447" alt="Screenshot 2022-02-20 at 23 42 52" src="https://user-images.githubusercontent.com/8314201/154865706-2e6f56a1-85e4-42dc-9ac2-3bcf14e5c6a2.png">
+
